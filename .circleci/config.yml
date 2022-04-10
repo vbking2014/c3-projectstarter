@@ -121,7 +121,7 @@ jobs:
 
   analyze-backend:
     docker:
-      - image: cimg/node:13.8.0
+      - image: cimg/node:14.0.0
     steps:
       - checkout
       - restore_cache:
