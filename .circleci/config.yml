@@ -322,9 +322,9 @@ workflows:
       - test-backend:
           requires: [build-backend]
       - analyze-backend:
-          requires: [build-backend]
+          requires: [test-backend]
       - analyze-frontend:
-          requires: [build-frontend]
+          requires: [test-frontend]
       - deploy-infrastructure:
           requires: [test-frontend, test-backend, analyze-frontend, analyze-backend]
           filters:
