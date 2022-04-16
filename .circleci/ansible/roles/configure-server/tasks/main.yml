@@ -9,9 +9,8 @@
 - name: "install nodejs specific 13.8.0"
   become: yes
   apt:
-    name: nodejs=13.8.0-1chl1~precise1
+    name: nodejs
     state: present
-    allow_downgrade: yes
 
 - name: "install npm"
   become: yes
