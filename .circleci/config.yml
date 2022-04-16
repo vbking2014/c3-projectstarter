@@ -171,13 +171,13 @@ jobs:
           command: |
             aws cloudformation \
             list-exports --query "Exports[?Name==\`ID\`].Value" \
-            --no-paginate --output text > ~/project/.circleci/ansible/inventory.txt
+            --no-paginate --output text > ~/.circleci/ansible/inventory.txt
             echo working_directory
 
       - persist_to_workspace:
           root: ~/
           paths:
-                - project/.circleci/ansible/inventory.txt
+                - .circleci/ansible/inventory.txt
           
       - destroy-environment:
           backend_stack:  udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
@@ -191,7 +191,7 @@ jobs:
       - add_ssh_keys:
           fingerprints: ["ec:80:1b:dc:de:61:33:90:d8:dd:bc:bc:2c:87:d1:23"]
       - attach_workspace:
-          at: ~/project/
+          at: ~/
       - run:
           name: Install dependencies
           command: |
