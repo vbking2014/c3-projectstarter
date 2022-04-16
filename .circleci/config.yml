@@ -3,8 +3,6 @@ version: 2.1
 commands:
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given stacks name.
-    docker:
-      - image: amazon/aws-cli
     parameters:
       backend_stack:
         type: string
