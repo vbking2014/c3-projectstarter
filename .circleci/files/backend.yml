@@ -36,9 +36,3 @@ Resources:
         - Key: Name
           Value: !Sub backend-${ID}
 
-Outputs:
-  ID:
-    Value: !Sub ${ID}
-    Description: stackname
-    Export:
-      Name: ID

@@ -169,12 +169,14 @@ jobs:
       - run:
           name: Add back-end ip to ansible inventory
           command: |
-            aws cloudformation \
-            list-exports --query "Exports[?Name==\`ID\`].Value" \
-            --no-paginate --output text > ~/project/.circleci/ansible/inventory.txt
+            cd .circleci/ansible
+            aws ec2 describe-instances \
+            --query 'Reservations[*].Instances[*].PublicIpAddress' \
+            --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+            --output text >> inventory.txt
 
       - persist_to_workspace:
-          root: ~/project/
+          root: .
           paths:
                 - .circleci/ansible/inventory.txt
           
@@ -190,7 +192,7 @@ jobs:
       - add_ssh_keys:
           fingerprints: ["ec:80:1b:dc:de:61:33:90:d8:dd:bc:bc:2c:87:d1:23"]
       - attach_workspace:
-          at: ~/project/
+          at: .
       - run:
           name: Install dependencies
           command: |
