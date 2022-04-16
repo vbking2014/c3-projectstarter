@@ -17,8 +17,9 @@
       wait_for_connection:
 
     - name: "install python for Ansible."
+      become: true
       apt:
-        install install python2
+        install python2
         curl https://bootstrap.pypa.io/pip/2.7/get-pip.py --output get-pip.py
         python2 get-pip.py
 
@@ -35,22 +36,23 @@
     - TYPEORM_MIGRATIONS_DIR: "{{ lookup('env', 'TYPEORM_MIGRATIONS_DIR')}}"
 
   roles:
-    - name: "update and upgrade packages."
-      become: true
-      apt:
-        upgrade: "yes"
+    - configure-server
+    # - name: "update and upgrade packages."
+    #   become: true
+    #   apt:
+    #     upgrade: "yes"
       
-    - name: "install dependencies."
-      become: true
-      apt:
-        name: ["nodejs", "npm"]
-        state: latest
-        update_cache: yes
+    # - name: "install dependencies."
+    #   become: true
+    #   apt:
+    #     name: ["nodejs", "npm"]
+    #     state: latest
+    #     update_cache: yes
 
-    - name: "install pm2"
-      become: true
-      npm:
-        name: pm2
-        global: yes
-        production: yes
-        state: present
+    # - name: "install pm2"
+    #   become: true
+    #   npm:
+    #     name: pm2
+    #     global: yes
+    #     production: yes
+    #     state: present
