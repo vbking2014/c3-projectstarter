@@ -172,12 +172,11 @@ jobs:
             aws cloudformation \
             list-exports --query "Exports[?Name==\`ID\`].Value" \
             --no-paginate --output text > ~/project/.circleci/ansible/inventory.txt
-            echo working_directory
 
       - persist_to_workspace:
-          root: ~/
+          root: ~/project/
           paths:
-                - project/.circleci/ansible/inventory.txt
+                - .circleci/ansible/inventory.txt
           
       - destroy-environment:
           backend_stack:  udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}

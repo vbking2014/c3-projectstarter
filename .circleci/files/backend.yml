@@ -35,3 +35,10 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub backend-${ID}
+
+Output:
+  ID:
+    Value: !Sub ${ID}
+    Description: stackname
+    Export:
+      Name: ID
