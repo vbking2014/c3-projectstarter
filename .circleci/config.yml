@@ -213,7 +213,7 @@ jobs:
       - checkout
       # retrieving the build cache from the backend analyze job.
       - restore_cache:
-          keys: [backend-analyze]
+          keys: [backend-build]
       - run:
           name: Install aws dependencies
           command: |
@@ -236,7 +236,7 @@ jobs:
             fi
       - save_cache:
           paths: [backend/node_modules]
-          key: backend-migrate
+          key: backend-build
      # Here's where you will add some code to rollback on failure      
 
 #   deploy-frontend:

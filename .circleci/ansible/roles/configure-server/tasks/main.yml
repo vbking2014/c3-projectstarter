@@ -1,12 +1,12 @@
 ---
-- name: "update and upgrade packages."
+- name: "update and upgrade packages"
   become: yes
   apt:
     update_cache: yes
     upgrade: yes
     
   
-- name: "install dependencies."
+- name: "install dependencies"
   become: yes
   apt:
     name: ["nodejs", "npm"]
