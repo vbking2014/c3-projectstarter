@@ -37,8 +37,8 @@ Resources:
           Value: !Sub backend-${ID}
 
 Output:
-  WorkflowID:
+  ID:
     Value: !Sub ${ID}
     Description: stackname
     Export:
-      Name: WorkflowID
+      Name: ID

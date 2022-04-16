@@ -8,6 +8,8 @@ commands:
         type: string
       frontend_stack:
         type: string
+    docker:
+      - image: amazon/aws-cli
     steps:
       - run:
           name: Destroy environments
@@ -170,7 +172,7 @@ jobs:
           name: Add back-end ip to ansible inventory
           command: |
             aws cloudformation \
-            list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+            list-exports --query "Exports[?Name==\`ID\`].Value" \
             --no-paginate --output text > ~/project/.circleci/ansible/inventory.txt
 
       - persist_to_workspace:
