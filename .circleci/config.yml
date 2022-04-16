@@ -211,9 +211,9 @@ jobs:
       - image: cimg/node:13.8.0
     steps:
       - checkout
-      # retrieving the build cache from the backend analyze job.
-      # - restore_cache:
-      #     keys: [backend-build]
+      # retrieving the build cache from the backend
+      - restore_cache:
+          keys: [backend-build]
       - run:
           name: Install aws dependencies
           command: |
@@ -237,9 +237,9 @@ jobs:
               # If you are using kvdb.io, generate the bucket ID "U6tbBiPUzNzX4NFALsu7WT" in your local terminal first
               curl https://kvdb.io/U6tbBiPUzNzX4NFALsu7WT/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
             fi
-      # - save_cache:
-      #     paths: [backend/node_modules]
-      #     key: backend-build
+      - save_cache:
+          paths: [backend/node_modules]
+          key: backend-build
      # Here's where you will add some code to rollback on failure      
 
 #   deploy-frontend:
@@ -350,15 +350,15 @@ workflows:
       #     requires: [build-backend]
       # - analyze-frontend:
       #     requires: [build-frontend]
-      # - deploy-infrastructure:
-      #     requires: [test-frontend, test-backend, analyze-frontend, analyze-backend]
-      #     filters:
-      #       branches:
-      #         only: [master]
-      # - configure-infrastructure:
-      #     requires: [deploy-infrastructure]
-      - run-migrations
-          # requires: [configure-infrastructure]
+      - deploy-infrastructure:
+          # requires: [test-frontend, test-backend, analyze-frontend, analyze-backend]
+          filters:
+            branches:
+              only: [master]
+      - configure-infrastructure:
+          requires: [deploy-infrastructure]
+      - run-migrations:
+          requires: [configure-infrastructure]
       # - deploy-frontend:
       #     requires: [run-migrations]
       # - deploy-backend:

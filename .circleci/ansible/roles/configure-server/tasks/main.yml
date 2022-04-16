@@ -6,12 +6,18 @@
     upgrade: yes
     
   
-- name: "install dependencies"
+- name: "install nodejs specific 13.8.0"
   become: yes
   apt:
-    name: ["nodejs", "npm"]
-    state: latest
-    update_cache: yes
+    name: nodejs=13.8.0
+    state: present 
+    allow_downgrade: yes
+
+- name: "install npm"
+  become: yes
+  apt:
+    name: npm
+    state: present
 
 - name: "install pm2"
   become: yes
