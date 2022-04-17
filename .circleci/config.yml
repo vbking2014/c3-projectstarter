@@ -190,16 +190,16 @@ jobs:
           fingerprints: ["ec:80:1b:dc:de:61:33:90:d8:dd:bc:bc:2c:87:d1:23"]
       - attach_workspace:
           at: .
-      - run:
-          name: Install aws dependencies
-          command: |
-            RUN apk add --no-cache \
-            python3 \
-            py3-pip \
-            && pip3 install --upgrade pip \
-            && pip3 install --no-cache-dir \
-            awscli \
-            && rm -rf /var/cache/apk/*    
+      # - run:
+      #     name: Install aws dependencies
+      #     command: |
+      #       RUN apk add --no-cache \
+      #       python3 \
+      #       py3-pip \
+      #       && pip3 install --upgrade pip \
+      #       && pip3 install --no-cache-dir \
+      #       awscli \
+      #       && rm -rf /var/cache/apk/*    
       - run:
           name: Install dependencies
           command: |
