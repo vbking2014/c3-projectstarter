@@ -3,21 +3,28 @@ version: 2.1
 commands:
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given stacks name.
-    parameters:
-      backend_stack:
-        type: string
-      frontend_stack:
-        type: string
+      # no need for parameters as workflow id is global parameter and can be used anywhere     
     steps:
       - run:
-          name: Destroy environments
+          name: Destroy backend
           when: on_fail
           command: |
-            aws cloudformation delete-stack --stack-name << parameters.backend_stack >>
-            aws cloudformation delete-stack --stack-name << parameters.frontend_stack >>
+            aws cloudformation delete-stack --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
+      - run:
+          name: Destroy frontend
+          when: on_fail
+          command: |
+            aws cloudformation delete-stack --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}     
+      - run:
+          name: Destroy S3 Bucket
+          when: on_fail
+          command: |
+            aws s3 rm s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
+            aws s3 rb s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --force   
 
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
+      # no need for parameters as workflow id is global parameter and can be used anywhere
     steps:
       - run:
           name: Revert migrations
@@ -27,9 +34,9 @@ commands:
             SUCCESS = $(curl --insecure  https://kvdb.io/KCCfFGBnShdtmsgb29LNG4/migration_$\{CIRCLE_WORKFLOW_ID:0:7\})
             if(( $SUCCESS==1 )); 
             then
-            cd backend
-            npm install
-            npm run migrations:revert
+              cd backend
+              npm install
+              npm run migrations:revert
             fi
             
 jobs:
@@ -118,8 +125,6 @@ jobs:
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-analyze
-# based on the critical analysis results from CircleCLI related to backend audit, using:
-# npm install --save-dev webpack@5.72.0 was recommended
   analyze-backend:
     docker:
       - image: cimg/node:14.0.0
@@ -376,20 +381,27 @@ jobs:
           backend_stack:  udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
           frontend_stack: udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}  
 
-#   cloudfront-update:
-#     docker:
-#       # Docker image here that supports AWS CLI
-#     steps:
-#       # Checkout code from git
-#       - run:
-#           name: Install dependencies
-#           command: |
-#             # your code here
-#       - run:
-#           name: Update cloudfront distribution
-#           command: |
-#             # your code here
-#       # Here's where you will add some code to rollback on failure  
+  cloudfront-update:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: Install dependencies
+          command: |
+            yum -y install tar gzip
+      - run:
+          name: Update cloudfront distribution
+          command: |
+            aws cloudformation deploy \
+            --template-file .circleci/files/cloudfront.yml \
+            --stack-name InitialStack \
+            --parameter-overrides WorkflowID="udapeople-${CIRCLE_WORKFLOW_ID:0:7}" \
+            --tags project=udapeople
+      - destroy-environment
+      - revert-migrations  
 
 # cleanup:
 #     docker:
@@ -413,21 +425,21 @@ jobs:
 workflows:
   default:
     jobs:
-      - build-frontend
-      - build-backend
-      - test-frontend:
-          requires: [build-frontend]
-      - test-backend:
-          requires: [build-backend]
-      - analyze-backend:
-          requires: [build-backend]
-      - analyze-frontend:
-          requires: [build-frontend]
-      - deploy-infrastructure:
-          requires: [test-frontend, test-backend, analyze-frontend, analyze-backend]
-          filters:
-            branches:
-              only: [master]
+      # - build-frontend
+      # - build-backend
+      # - test-frontend:
+      #     requires: [build-frontend]
+      # - test-backend:
+      #     requires: [build-backend]
+      # - analyze-backend:
+      #     requires: [build-backend]
+      # - analyze-frontend:
+      #     requires: [build-frontend]
+      - deploy-infrastructure
+          # requires: [test-frontend, test-backend, analyze-frontend, analyze-backend]
+          # filters:
+          #   branches:
+          #     only: [master]
       - configure-infrastructure:
           requires: [deploy-infrastructure]
       - run-migrations:
@@ -436,8 +448,8 @@ workflows:
           requires: [run-migrations]
       - deploy-backend:
           requires: [run-migrations]
-      # - smoke-test:
-      #     requires: [deploy-backend, deploy-frontend]
+      - smoke-test:
+          requires: [deploy-backend, deploy-frontend]
       # - cloudfront-update:
       #     requires: [smoke-test]
       # - cleanup:
