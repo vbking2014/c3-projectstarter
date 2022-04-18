@@ -32,7 +32,7 @@ commands:
           command: |
             # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
             SUCCESS = $(curl --insecure  https://kvdb.io/KCCfFGBnShdtmsgb29LNG4/migration_$\{CIRCLE_WORKFLOW_ID:0:7\})
-            if(( $SUCCESS==1 )); 
+            if(( $SUCCESS=='True' )); 
             then
               cd backend
               npm install
@@ -241,7 +241,7 @@ jobs:
             if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
             then
               # If you are using kvdb.io, generate the bucket ID "KCCfFGBnShdtmsgb29LNG4" in your local terminal first
-              curl https://kvdb.io/KCCfFGBnShdtmsgb29LNG4/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
+              curl https://kvdb.io/KCCfFGBnShdtmsgb29LNG4/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d 'True'
             fi
       - save_cache:
           paths: [backend/node_modules]
@@ -281,8 +281,8 @@ jobs:
             npm run build
             tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
             aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
-      - revert-migrations
       - destroy-environment
+      - revert-migrations
            
                     
   deploy-backend:
@@ -317,8 +317,10 @@ jobs:
             echo "Contents  of the inventory.txt file is -------"
             cat inventory.txt
             ansible-playbook -i inventory.txt deploy-backend.yml
-      - revert-migrations
       - destroy-environment
+      - revert-migrations
+      
+      
           
   smoke-test:
     docker:
@@ -364,8 +366,8 @@ jobs:
             else
               return 1
             fi
-      # - revert-migrations
-      # - destroy-environment
+      - destroy-environment
+      - revert-migrations
 
   cloudfront-update:
     docker:
