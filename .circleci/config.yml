@@ -399,7 +399,7 @@ jobs:
       steps:
         - checkout
         - run:
-            name: Get old stack workflow id
+            name: Get old stack workflow id and delete related stacks and files
             command: |
               # Fetch the Old workflow ID
               export OldWorkflowID=$(aws cloudformation \
@@ -411,9 +411,7 @@ jobs:
               export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
                       --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
               echo "${STACKS[@]}"
-        - run:
-            name: Remove old stacks and files
-            command: |
+              
               if [[ "${CIRCLE_WORKFLOW_ID:0:7}" != "${OldWorkflowID}" ]]
               then
                 echo "s3://${OldWorkflowID}/"
