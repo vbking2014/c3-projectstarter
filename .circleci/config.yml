@@ -422,6 +422,7 @@ jobs:
                 else
                   echo 'cleanup is not applicable'
                 fi
+              else  
                 echo 'cleanup is not applicable'
               fi
             
