@@ -15,6 +15,7 @@
     production: yes
 
 - name: copy built backend files
+  become: yes
   copy:
     src: /root/project/backend/artifact.tar.gz
     dest: /home/ubuntu
