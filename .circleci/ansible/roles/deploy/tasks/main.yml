@@ -16,9 +16,8 @@
 
 - name: copy built backend files
   become: yes
-  # remote_src: yes
   copy:
-    src: ~/project/backend/artifact.tar.gz
+    src: artifact.tar.gz
     dest: /home/ubuntu
 
 - name: Extract backend
