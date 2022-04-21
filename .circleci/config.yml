@@ -311,7 +311,7 @@ jobs:
             apk add --update curl
             pip install awscli
       - run:
-          name: Deploy backend
+          name: Prepare deploy backend
           command: |
             cd backend
             npm i
@@ -319,7 +319,18 @@ jobs:
             cd ..
             # Zip the directory
             tar -C backend -czvf artifact.tar.gz .
-            cp artifact.tar.gz .circleci/ansible/roles/deploy/files
+            md .circleci/ansible/roles/deploy/files
+            cpnsible/roles/ artifact.tar.gz .circleci/ansible/roles/deploy/files/artifact.tar.gz
+            cd .circleci/adeploy/files
+            ls
+            cd ..
+            cd ..
+            cd ..
+            cd ..
+            cd ..
+      - run:
+          name: Deploy backend
+          command: |
             cd .circleci/ansible
             echo "Contents  of the inventory.txt file is -------"
             cat inventory.txt
