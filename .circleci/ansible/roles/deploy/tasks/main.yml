@@ -6,7 +6,18 @@
     state: present
     update_cache: yes
 
+- name: copy built backend files
+  become: yes
+  copy:
+    src: artifact.tar.gz
+    dest: /home/ubuntu
+
+- name: Extract backend
+  shell: |
+    cd /home/ubuntu
+    tar -xzvf artifact.tar.gz
 # issue not installing latst version of nodejs, default installed v10.19.0; https://www.freecodecamp.org/news/how-to-install-node-js-on-ubuntu-and-update-npm-to-the-latest-version/
+
 - name: "install specific nodejs version 13.8.0"
   shell: |
     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
@@ -20,17 +31,6 @@
     global: yes
     state: present
     production: yes
-
-- name: copy built backend files
-  become: yes
-  copy:
-    src: artifact.tar.gz
-    dest: /home/ubuntu
-
-- name: Extract backend
-  shell: |
-    cd /home/ubuntu
-    tar -xzvf artifact.tar.gz
 
 - name: Start pm2
   shell: |
