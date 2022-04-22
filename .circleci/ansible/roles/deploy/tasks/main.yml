@@ -2,7 +2,7 @@
 - name: "install dependencies."
   become: yes
   apt:
-    name: ['tar', 'nodejs', 'npm']
+    name: ['tar', 'nodejs']
     state: latest
     update_cache: yes
 
@@ -24,10 +24,10 @@
   shell: |
     cd /home/ubuntu
     tar -xzfv artifact.tar.gz
-    rm -rf artifact.tar.gz
 
 - name: Start pm2
   shell: |    
     cd /home/ubuntu/backend
+    npm i
     pm2 stop default
-    pm2 start npm -- start
+    pm2 start npm --name backend -- start
