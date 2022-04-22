@@ -2,9 +2,17 @@
 - name: "install dependencies."
   become: yes
   apt:
-    name: tar
-    state: present
+    name: ['tar', 'nodejs']
+    state: latest
     update_cache: yes
+
+- name: "install pm2"
+  become: yes
+  npm:
+    name: pm2
+    global: yes
+    state: present
+    production: yes
 
 - name: copy built backend files
   become: yes
@@ -16,25 +24,10 @@
   shell: |
     cd /home/ubuntu
     tar -xzvf artifact.tar.gz
-# issue not installing latst version of nodejs, default installed v10.19.0; https://www.freecodecamp.org/news/how-to-install-node-js-on-ubuntu-and-update-npm-to-the-latest-version/
-
-- name: "install specific nodejs version 13.8.0"
-  shell: |
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
-    source ~/.nvm/nvm.sh
-    nvm install 13.8.0
-
-- name: "install pm2"
-  become: yes
-  npm:
-    name: pm2
-    global: yes
-    state: present
-    production: yes
 
 - name: Start pm2
-  shell: |
-    cd dist    
+  shell: |    
+    cd dist
     npm i
     pm2 stop default
-    pm2 start npm -- start
+    pm2 start npm --name main.js -- start
