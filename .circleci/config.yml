@@ -310,6 +310,20 @@ jobs:
             apk add --update nodejs
             apk add --update curl
             pip install awscli
+      # adding this step to add env variables to the backend so it can be migrated to the ec2 instance
+      # This consumed a lot of time investigating
+      - run:
+          name: updating env variables
+          command: |
+            echo "TYPEORM_MIGRATIONS=${TYPEORM_MIGRATIONS}" >> backend/.env
+            echo "TYPEORM_ENTITIES=${TYPEORM_ENTITIES}" >> backend/.env
+            echo "TYPEORM_CONNECTION=${TYPEORM_CONNECTION}" >> backend/.env
+            echo "TYPEORM_HOST=${TYPEORM_HOST}" >> backend/.env
+            echo "TYPEORM_PORT=${TYPEORM_PORT}" >> backend/.env
+            echo "TYPEORM_USERNAME=${TYPEORM_USERNAME}" >> backend/.env
+            echo "TYPEORM_PASSWORD=${TYPEORM_PASSWORD}" >> backend/.env
+            echo "TYPEORM_DATABASE=${TYPEORM_DATABASE}" >> backend/.env
+            echo "ENVIRONMENT: production" >> backend/.env
       - run:
           name: Prepare deploy backend
           command: |
