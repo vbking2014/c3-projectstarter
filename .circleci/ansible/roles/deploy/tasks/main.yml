@@ -19,20 +19,20 @@
 - name: "Add nodejs 13.x"
   shell: |
     curl -fsSL https://deb.nodesource.com/setup_13.x | sudo -E bash 
-
-- name: Install nodejs
-  become: yes
-  apt:
-    update_cache: yes
-    name: nodejs
-    state: present
+    sudo apt-get install -y nodejs
+# - name: Install nodejs
+#   become: yes
+#   apt:
+#     update_cache: yes
+#     name: nodejs
+#     state: present
 
 - name: install pm2
   become: yes
   npm:
     name: pm2
     global: yes
-    state: present
+    state: latest
     production: yes
 
 - name: copy built backend files
