@@ -3,7 +3,7 @@
   become: yes
   apt:
     name: ['tar', 'nodejs']
-    state: present
+    state: latest
     update_cache: yes
 
 - name: "install pm2"
