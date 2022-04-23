@@ -163,7 +163,7 @@ jobs:
             # Fetch the stack names
             export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
                     --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
-            echo stacks: "${STACKS[@]}"
+            export STACK=echo "${STACKS[@]}"
             # storing Stacks value in KVDB
             curl https://kvdb.io/U6tbBiPUzNzX4NFALsu7WT/Stacks_${CIRCLE_WORKFLOW_ID:0:7}  -d ${STACKS}
             echo KVDB Stacks are: $(curl --insecure  https://kvdb.io/U6tbBiPUzNzX4NFALsu7WT/Stacks_${CIRCLE_WORKFLOW_ID:0:7})
@@ -357,11 +357,7 @@ jobs:
             cp artifact.tar.gz .circleci/ansible/roles/deploy/files/artifact.tar.gz
             cd .circleci/ansible/roles/deploy/files
             ls
-            cd ..
-            cd ..
-            cd ..
-            cd ..
-            cd ..
+            cd ~
       - run:
           name: Deploy backend
           command: |

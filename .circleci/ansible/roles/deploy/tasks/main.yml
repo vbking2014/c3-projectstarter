@@ -2,17 +2,9 @@
 - name: "install dependencies."
   become: yes
   apt:
-    name: ['tar', 'nodejs']
+    name: tar
     state: latest
     update_cache: yes
-
-- name: "install pm2"
-  become: yes
-  npm:
-    name: pm2
-    global: yes
-    state: present
-    production: yes
 
 - name: copy built backend files
   become: yes
@@ -24,6 +16,20 @@
   shell: |
     cd /home/ubuntu
     tar -xzvf artifact.tar.gz
+
+- name: "install nodejs"
+  become: yes
+  Shell: |
+    apk add --update nodejs npm
+    apk add --update npm
+    
+# - name: "install pm2"
+#   become: yes
+#   npm:
+#     name: pm2
+#     global: yes
+#     state: present
+#     production: yes
 
 - name: Start pm2
   shell: |    
