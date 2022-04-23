@@ -216,16 +216,7 @@ jobs:
           fingerprints: ["ec:80:1b:dc:de:61:33:90:d8:dd:bc:bc:2c:87:d1:23"]
       - attach_workspace:
           at: .
-      # - run:
-      #     name: Install aws dependencies
-      #     command: |
-      #       RUN apk add --no-cache \
-      #       python3 \
-      #       py3-pip \
-      #       && pip3 install --upgrade pip \
-      #       && pip3 install --no-cache-dir \
-      #       awscli \
-      #       && rm -rf /var/cache/apk/*    
+
       - run:
           name: Install dependencies
           command: |
@@ -370,8 +361,8 @@ jobs:
             echo "Contents  of the inventory.txt file is -------"
             cat inventory.txt
             ansible-playbook -i inventory.txt deploy-backend.yml
-      # - destroy-environment
-      # - revert-migrations
+      - destroy-environment
+      - revert-migrations
       
       
           
@@ -417,8 +408,8 @@ jobs:
             else
               return 1
             fi
-      # - destroy-environment
-      # - revert-migrations
+      - destroy-environment
+      - revert-migrations
 
   cloudfront-update:
     docker:
@@ -498,10 +489,9 @@ workflows:
           requires: [run-migrations]
       - deploy-backend:
           requires: [run-migrations]
-      # - smoke-test:
-      #     requires: [deploy-backend, deploy-frontend]
-      - cloudfront-update:
+      - smoke-test:
           requires: [deploy-backend, deploy-frontend]
-          # requires: [smoke-test]
+      - cloudfront-update:
+          requires: [smoke-test]
       - cleanup:
           requires: [cloudfront-update]

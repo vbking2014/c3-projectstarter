@@ -1,18 +1,31 @@
 ---
-- name: "install dependencies."
+- name: install tar
   become: yes
   apt:
     name: tar
     state: latest
     update_cache: yes
 
-# - name: "install pm2"
-#   become: yes
-#   npm:
-#     name: pm2
-#     global: yes
-#     state: present
-#     production: yes
+- name: Add nodejs 13.x
+  become: yes
+  apt_repository:
+    repo: deb https://deb.nodesource.com/node_13.x
+    update_cache: yes
+
+- name: Install nodejs
+  become: yes
+  apt:
+    update_cache: yes
+    name: nodejs
+    state: present
+
+- name: install pm2
+  become: yes
+  npm:
+    name: pm2
+    global: yes
+    state: present
+    production: yes
 
 - name: copy built backend files
   become: yes
@@ -25,8 +38,8 @@
     cd /home/ubuntu
     tar -xzvf artifact.tar.gz
 
-# - name: Start pm2
-#   shell: |    
-#     npm i
-#     pm2 stop default
-#     pm2 start npm -- start
+- name: Start pm2
+  shell: |    
+    npm i
+    pm2 stop default
+    pm2 start npm -- start
