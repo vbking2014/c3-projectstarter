@@ -165,7 +165,12 @@ jobs:
                     --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
             echo stacks: "${STACKS[@]}"
             # storing Stacks value in KVDB
-            curl https://kvdb.io/U6tbBiPUzNzX4NFALsu7WT/Stacks_${CIRCLE_WORKFLOW_ID:0:7}  -d ${STACKS}
+            if [[ "${STACKS}"  != "" ]]
+            then
+              curl https://kvdb.io/U6tbBiPUzNzX4NFALsu7WT/Stacks_${CIRCLE_WORKFLOW_ID:0:7}  -d ${STACKS}
+            else
+              curl https://kvdb.io/U6tbBiPUzNzX4NFALsu7WT/Stacks_${CIRCLE_WORKFLOW_ID:0:7}  -d 0
+            fi
             echo KVDB Stacks are: $(curl --insecure  https://kvdb.io/U6tbBiPUzNzX4NFALsu7WT/Stacks_${CIRCLE_WORKFLOW_ID:0:7})
 
       - run:
@@ -454,7 +459,7 @@ jobs:
               echo Stacks: "${STACKS}"
               if [[ "${CIRCLE_WORKFLOW_ID:0:7}" != "${OldWorkflowID}" ]]
               then
-                if [[ "${STACKS}"  != "" ]]
+                if [[ "${STACKS}"  != 0 ]]
                 then
                   echo "cleanup is required"
                   aws s3 rb "s3://udapeople-${OldWorkflowID}/" --force
