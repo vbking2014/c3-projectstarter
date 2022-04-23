@@ -29,7 +29,7 @@ commands:
           when: on_fail
           command: |
             # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
-            SUCCESS=$(curl --insecure https://kvdb.io/U6tbBiPUzNzX4NFALsu7WT/migration_${CIRCLE_WORKFLOW_ID:0:7})
+            SUCCESS=$(curl --insecure https://kvdb.io/PaPoY6PLE4jpdZW9ZLbpwJ/migration_${CIRCLE_WORKFLOW_ID:0:7})
             if(( $SUCCESS==1 )); 
             then
               cd backend
@@ -158,8 +158,8 @@ jobs:
             echo OldWorkflowID: "${OldWorkflowID}"
             echo CIRCLE_WORKFLOW_ID "${CIRCLE_WORKFLOW_ID:0:7}"
             # storing old workflow id value in KVDB
-            curl https://kvdb.io/U6tbBiPUzNzX4NFALsu7WT/OldWorkflowID_${CIRCLE_WORKFLOW_ID:0:7}  -d ${OldWorkflowID}
-            echo KVDB Old Workflow is: $(curl --insecure  https://kvdb.io/U6tbBiPUzNzX4NFALsu7WT/OldWorkflowID_${CIRCLE_WORKFLOW_ID:0:7})
+            curl https://kvdb.io/PaPoY6PLE4jpdZW9ZLbpwJ/OldWorkflowID_${CIRCLE_WORKFLOW_ID:0:7}  -d ${OldWorkflowID}
+            echo KVDB Old Workflow is: $(curl --insecure  https://kvdb.io/PaPoY6PLE4jpdZW9ZLbpwJ/OldWorkflowID_${CIRCLE_WORKFLOW_ID:0:7})
             # Fetch the stack names
             export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
                     --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
@@ -167,11 +167,11 @@ jobs:
             # storing Stacks value in KVDB
             if [[ "${STACKS}"  != "" ]]
             then
-              curl https://kvdb.io/U6tbBiPUzNzX4NFALsu7WT/Stacks_${CIRCLE_WORKFLOW_ID:0:7}  -d ${STACKS}
+              curl https://kvdb.io/PaPoY6PLE4jpdZW9ZLbpwJ/Stacks_${CIRCLE_WORKFLOW_ID:0:7}  -d ${STACKS}
             else
-              curl https://kvdb.io/U6tbBiPUzNzX4NFALsu7WT/Stacks_${CIRCLE_WORKFLOW_ID:0:7}  -d 0
+              curl https://kvdb.io/PaPoY6PLE4jpdZW9ZLbpwJ/Stacks_${CIRCLE_WORKFLOW_ID:0:7}  -d 0
             fi
-            echo KVDB Stacks are: $(curl --insecure  https://kvdb.io/U6tbBiPUzNzX4NFALsu7WT/Stacks_${CIRCLE_WORKFLOW_ID:0:7})
+            echo KVDB Stacks are: $(curl --insecure  https://kvdb.io/PaPoY6PLE4jpdZW9ZLbpwJ/Stacks_${CIRCLE_WORKFLOW_ID:0:7})
 
       - run:
           name: Ensure back-end infrastructure exists
@@ -267,12 +267,12 @@ jobs:
             if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
             cat ${CIRCLE_WORKFLOW_ID:0:7}
             then
-              curl https://kvdb.io/U6tbBiPUzNzX4NFALsu7WT/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d 1
-              echo $(curl --insecure  https://kvdb.io/U6tbBiPUzNzX4NFALsu7WT/migration_${CIRCLE_WORKFLOW_ID:0:7})
+              curl https://kvdb.io/PaPoY6PLE4jpdZW9ZLbpwJ/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d 1
+              echo $(curl --insecure  https://kvdb.io/PaPoY6PLE4jpdZW9ZLbpwJ/migration_${CIRCLE_WORKFLOW_ID:0:7})
             else
               # This part was created as revert migration will fail because the key in KVDB will not be created, that's why it is created now for both scnarios.
-              curl https://kvdb.io/U6tbBiPUzNzX4NFALsu7WT/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d 0
-              echo $(curl --insecure  https://kvdb.io/U6tbBiPUzNzX4NFALsu7WT/migration_${CIRCLE_WORKFLOW_ID:0:7})
+              curl https://kvdb.io/PaPoY6PLE4jpdZW9ZLbpwJ/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d 0
+              echo $(curl --insecure  https://kvdb.io/PaPoY6PLE4jpdZW9ZLbpwJ/migration_${CIRCLE_WORKFLOW_ID:0:7})
             fi
       - save_cache:
           paths: [backend/node_modules]
@@ -451,11 +451,11 @@ jobs:
             name: Get old stack workflow id from KVDB and delete related stacks and files
             command: |
               
-              export OldWorkflowID=$(curl --insecure  https://kvdb.io/U6tbBiPUzNzX4NFALsu7WT/OldWorkflowID_${CIRCLE_WORKFLOW_ID:0:7})
+              export OldWorkflowID=$(curl --insecure  https://kvdb.io/PaPoY6PLE4jpdZW9ZLbpwJ/OldWorkflowID_${CIRCLE_WORKFLOW_ID:0:7})
               echo OldWorkflowID: "${OldWorkflowID}"
               echo CIRCLE_WORKFLOW_ID "${CIRCLE_WORKFLOW_ID:0:7}"
                       
-              export STACKS=$(curl --insecure  https://kvdb.io/U6tbBiPUzNzX4NFALsu7WT/Stacks_${CIRCLE_WORKFLOW_ID:0:7})
+              export STACKS=$(curl --insecure  https://kvdb.io/PaPoY6PLE4jpdZW9ZLbpwJ/Stacks_${CIRCLE_WORKFLOW_ID:0:7})
               echo Stacks: "${STACKS}"
               if [[ "${CIRCLE_WORKFLOW_ID:0:7}" != "${OldWorkflowID}" ]]
               then
