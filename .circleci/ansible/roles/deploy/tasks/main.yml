@@ -20,6 +20,7 @@
 - name: "install nodejs"
   become: yes
   Shell: |
+    apk add --update curl
     apk add --update nodejs npm
     apk add --update npm
     
