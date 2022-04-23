@@ -18,7 +18,6 @@
     tar -xzvf artifact.tar.gz
 
 - name: "install nodejs"
-  become: yes
   Shell: |
     apk add --update curl
     apk add --update nodejs npm
