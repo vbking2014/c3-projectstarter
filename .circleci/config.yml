@@ -294,6 +294,8 @@ jobs:
             export API_URL="http://${BACKEND_IP}:3030"
             echo "API_URL = ${API_URL}"
             echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
+            # note for production
+            echo NODE_ENV=production >> frontend/.env
             echo "Frontend Env ........"
             cat frontend/.env
       - run:
