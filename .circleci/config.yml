@@ -78,16 +78,12 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [frontend-test]
+          keys: [frontend-build]
       - run:
           name: front-end test
           command: |
              cd frontend
-             npm i
              npm run test
-      - save_cache:
-          paths: [frontend/node_modules]
-          key: frontend-test
                 
   test-backend:
     docker:
@@ -95,16 +91,12 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [backend-test]
+          keys: [backend-build]
       - run:
           name: backend-end test
           command: |
              cd backend
-             npm i
              npm run test
-      - save_cache:
-          paths: [backend/node_modules]
-          key: backend-test
             
   analyze-frontend:
     docker:
@@ -112,35 +104,28 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [frontend-analyze]
+          keys: [frontend-build]
       - run:
           name: front-end analyze
           command: |
              cd frontend
-             npm i
              npm audit fix --audit-level=critical --force
              npm audit --audit-level critical
-      - save_cache:
-          paths: [frontend/node_modules]
-          key: frontend-analyze
+
   analyze-backend:
     docker:
       - image: cimg/node:14.0.0
     steps:
       - checkout
       - restore_cache:
-          keys: [backend-analyze]
+          keys: [backend-build]
       - run:
           name: backend-end analyze
           command: |
              cd backend
-             npm i
              npm audit fix --audit-level=critical --force
              npm audit fix --audit-level=critical --force
              npm audit --audit-level critical
-      - save_cache:
-          paths: [backend/node_modules]
-          key: backend-analyze
 
   deploy-infrastructure:
     docker:
@@ -265,9 +250,9 @@ jobs:
               curl https://kvdb.io/PaPoY6PLE4jpdZW9ZLbpwJ/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d 0
               echo $(curl --insecure  https://kvdb.io/PaPoY6PLE4jpdZW9ZLbpwJ/migration_${CIRCLE_WORKFLOW_ID:0:7})
             fi
-      - save_cache:
-          paths: [backend/node_modules]
-          key: backend-build
+      # - save_cache:
+      #     paths: [backend/node_modules]
+      #     key: backend-build
      # Here's where you will add some code to rollback on failure      
       - destroy-environment
 
@@ -290,18 +275,14 @@ jobs:
       - run:
           name: Get backend url
           command: |
+            echo ENVIRONMENT=production  >> frontend/.env
             echo NODE_ENV=production >> frontend/.env
-            echo NODE_ENV=production >> frontend/.env.production
             export BACKEND_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" --output text)
             export API_URL="http://${BACKEND_IP}:3030"
             echo "API_URL = ${API_URL}"
             echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
-            echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env.development
-            echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env.production
             echo "Frontend Env ........"
             cat frontend/.env
-            cat frontend/.env.development
-            cat frontend/.env.production
       - run:
           name: Deploy frontend objects
           command: |
@@ -309,9 +290,7 @@ jobs:
             cat frontend/.env
             cd frontend
             npm install 
-            export NODE_ENV=production
             npm run build
-            npm i
             tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
             aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
             
