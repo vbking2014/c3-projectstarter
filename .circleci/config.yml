@@ -109,7 +109,6 @@ jobs:
           name: front-end analyze
           command: |
              cd frontend
-             npm i
              npm audit fix --audit-level=critical --force
              npm audit fix --audit-level=critical --force
              npm audit --audit-level critical
